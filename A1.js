@@ -51,7 +51,7 @@ new THREE.SourceLoader().load(shaderFiles, function (shaders) {
 // Look at the definition of loadOBJ to familiarize yourself with how each parameter
 // affects the loaded object.
 loadAndPlaceOBJ('obj/armadillo.obj', armadilloMaterial, function (armadillo) {
-  armadillo.position.set(0.0, 5.3, -8.0);
+  armadillo.position.set(0.0, 5.0, -8.0);
   armadillo.rotation.y = Math.PI;
   armadillo.scale.set(0.1, 0.1, 0.1);
   armadillo.parent = worldFrame;
@@ -63,12 +63,26 @@ loadAndPlaceOBJ('obj/armadillo.obj', armadilloMaterial, function (armadillo) {
 loadAndPlaceOBJ(
   'obj/boxing_glove.obj',
   boxingGloveMaterial,
-  function (boxing_glove) {
-    boxing_glove.position.set(0.0, 5.3, -8.0);
-    boxing_glove.rotation.y = Math.PI;
-    boxing_glove.scale.set(1, 1, 1);
-    boxing_glove.parent = worldFrame;
-    scene.add(boxing_glove);
+  function (right_glove) {
+    right_glove.position.set(5.5, 11.4, -4.6);
+    right_glove.rotation.x = -0.4;
+    right_glove.rotation.y = Math.PI - 1.4;
+    right_glove.scale.set(1.2, 1.2, 1.2);
+    right_glove.parent = worldFrame;
+    scene.add(right_glove);
+  },
+);
+
+loadAndPlaceOBJ(
+  'obj/boxing_glove.obj',
+  boxingGloveMaterial,
+  function (left_glove) {
+    left_glove.position.set(-5.5, 11.65, -5.0);
+    left_glove.rotation.x = -0.5;
+    left_glove.rotation.y = 1.4;
+    left_glove.scale.set(1.2, 1.2, 1.2);
+    left_glove.parent = worldFrame;
+    scene.add(left_glove);
   },
 );
 
