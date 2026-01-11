@@ -15,7 +15,7 @@ const {renderer, scene, camera, worldFrame} = setup();
 const orbPosition = {type: 'v3', value: new THREE.Vector3(0.0, 1.0, 0.0)};
 // TODO: Create uniform variable for the radius of the orb and pass it into the shaders,
 // you will need them in the latter part of the assignment
-const orbRadius = {type: 'v3', value: new THREE.Vector3()};
+const orbRadius = {value: 2.5};
 
 // Materials: specifying uniforms and shaders
 // Diffuse texture map (this defines the main colors of the boxing glove)
@@ -28,6 +28,7 @@ const boxingGloveMaterial = new THREE.MeshStandardMaterial({
 const armadilloMaterial = new THREE.ShaderMaterial({
   uniforms: {
     orbPosition: orbPosition,
+    orbRadius: orbRadius,
   },
 });
 const sphereMaterial = new THREE.ShaderMaterial({
