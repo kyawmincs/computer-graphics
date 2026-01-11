@@ -15,6 +15,7 @@ const {renderer, scene, camera, worldFrame} = setup();
 const orbPosition = {type: 'v3', value: new THREE.Vector3(0.0, 1.0, 0.0)};
 // TODO: Create uniform variable for the radius of the orb and pass it into the shaders,
 // you will need them in the latter part of the assignment
+const orbRadius = {type: 'v3', value: new THREE.Vector3()};
 
 // Materials: specifying uniforms and shaders
 // Diffuse texture map (this defines the main colors of the boxing glove)
@@ -24,7 +25,11 @@ const gloveColorMap = new THREE.TextureLoader().load(
 const boxingGloveMaterial = new THREE.MeshStandardMaterial({
   map: gloveColorMap,
 });
-const armadilloMaterial = new THREE.ShaderMaterial();
+const armadilloMaterial = new THREE.ShaderMaterial({
+  uniforms: {
+    orbPosition: orbPosition,
+  },
+});
 const sphereMaterial = new THREE.ShaderMaterial({
   uniforms: {
     orbPosition: orbPosition,
@@ -67,7 +72,8 @@ loadAndPlaceOBJ(
     right_glove.position.set(5.5, 11.4, -4.6);
     right_glove.rotation.x = -0.4;
     right_glove.rotation.y = Math.PI - 1.4;
-    right_glove.scale.set(1.2, 1.2, 1.2);
+    right_glove.rotation.z = -0.5;
+    right_glove.scale.set(1.3, 1.3, 1.3);
     right_glove.parent = worldFrame;
     scene.add(right_glove);
   },
@@ -77,10 +83,11 @@ loadAndPlaceOBJ(
   'obj/boxing_glove.obj',
   boxingGloveMaterial,
   function (left_glove) {
-    left_glove.position.set(-5.5, 11.65, -5.0);
+    left_glove.position.set(-5.5, 12.0, -5.0);
     left_glove.rotation.x = -0.5;
     left_glove.rotation.y = 1.4;
-    left_glove.scale.set(1.2, 1.2, 1.2);
+    left_glove.rotation.z = 0.0;
+    left_glove.scale.set(1.3, 1.3, 1.3);
     left_glove.parent = worldFrame;
     scene.add(left_glove);
   },

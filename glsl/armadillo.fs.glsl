@@ -4,5 +4,5 @@ in float intensity;
 
 void main() {
  	// TODO: Set final rendered colour to intensity (a grey level)
-	gl_FragColor = vec4(intensity*vec3(1.0,1.0,1.0), 1.0); 
+	gl_FragColor = vec4(intensity * vec3(1.0,1.0,1.0), 1.0); 
 }

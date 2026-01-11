@@ -7,14 +7,16 @@ out float intensity;
 
 void main() {
 
-    intensity = 0.0; // TODO: REPLACE ME
+  	// HINT: INTENSITY IS CALCULATED BY TAKING THE DOT PRODUCT OF THE NORMAL AND LIGHT DIRECTION VECTORS
+    vec3 worldPos = (modelMatrix * vec4(position, 1.0)).xyz; // Since vec3 remove last dimension
+    vec3 lightDir = normalize(orbPosition - worldPos);
+    vec3 worldNorm = normalize(normalMatrix * normal);
+    // Negative from cos(θ) -> removed 
+    intensity = max(0.0, dot(lightDir, worldNorm));
 
-    // TODO: Make changes here for part b, c, d
-  	// HINT: INTENSITY IS CALCULATED BY TAKING THE DOT PRODUCT OF THE NORMAL AND LIGHT DIRECTION VECTORS\
 
     // Multiply each vertex by the model matrix to get the world position of each vertex, 
     // then the view matrix to get the position in the camera coordinate system, 
     // and finally the projection matrix to get final vertex position
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
-    
 }
