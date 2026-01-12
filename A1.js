@@ -73,8 +73,8 @@ loadAndPlaceOBJ(
     right_glove.position.set(5.5, 11.4, -4.6);
     right_glove.rotation.x = -0.4;
     right_glove.rotation.y = Math.PI - 1.4;
-    right_glove.rotation.z = -0.5;
-    right_glove.scale.set(1.3, 1.3, 1.3);
+    right_glove.rotation.z = -13 * (Math.PI / 180);
+    right_glove.scale.set(1.45, 1.45, 1.45);
     right_glove.parent = worldFrame;
     scene.add(right_glove);
   },
@@ -85,10 +85,10 @@ loadAndPlaceOBJ(
   boxingGloveMaterial,
   function (left_glove) {
     left_glove.position.set(-5.5, 12.0, -5.0);
-    left_glove.rotation.x = -0.5;
+    left_glove.rotation.x = -0.4;
     left_glove.rotation.y = 1.4;
-    left_glove.rotation.z = 0.0;
-    left_glove.scale.set(1.3, 1.3, 1.3);
+    left_glove.rotation.z = -14 * (Math.PI / 180);
+    left_glove.scale.set(1.45, 1.45, 1.45);
     left_glove.parent = worldFrame;
     scene.add(left_glove);
   },
