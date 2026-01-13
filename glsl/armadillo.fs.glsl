@@ -7,10 +7,9 @@ uniform vec3 orbPosition;
 uniform float orbRadius;
 
 void main() {
- 	// TODO: Set final rendered colour to intensity (a grey level)
-  if (distance(vWorldPos, orbPosition) < orbRadius) {
+  if (distance(vWorldPos, orbPosition) < orbRadius + 1.0w) {
     gl_FragColor = vec4(intensity * vec3(0.0, 1.0, 1.0), 1.0); 
   } else {
-    gl_FragColor = vec4(intensity * vec3(1.0,1.0,1.0), 1.0); 
+    gl_FragColor = vec4(intensity * vec3(1.0, 1.0, 1.0), 1.0); 
   }
 }

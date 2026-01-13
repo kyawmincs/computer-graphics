@@ -8,8 +8,7 @@ void main() {
     // and finally the projection matrix to get final vertex position.
 
     // Claude mentioned this was better but why? Ask in OH
-    // vec4 worldPos = modelMatrix * vec4(position, 1.0);
-    // worldPos.xyz += orbPosition;
-    // gl_Position = projectionMatrix * viewMatrix * worldPos;
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position + orbPosition, 1);
+    vec4 worldPos = modelMatrix * vec4(position, 1.0);
+    worldPos.xyz += orbPosition;
+    gl_Position = projectionMatrix * viewMatrix * worldPos;
 }

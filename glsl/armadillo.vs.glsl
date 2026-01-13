@@ -1,15 +1,15 @@
 // The uniform variable is set up in the javascript code and the same for all vertices
 uniform vec3 orbPosition;
+uniform float orbRadius;
 
 // This is a "varying" variable and interpolated between vertices and across fragments.
 // The shared variable is initialized in the vertex shader and passed to the fragment shader.
 out float intensity;
 out vec3 vWorldPos;
 
-void main() {
 
-  	// HINT: INTENSITY IS CALCULATED BY TAKING THE DOT PRODUCT OF THE NORMAL AND LIGHT DIRECTION VECTORS
-    vec3 worldPos = (modelMatrix * vec4(position, 1.0)).xyz; // Since vec3 remove last dimension
+void main() {
+    vec3 worldPos = (modelMatrix * vec4(position, 1.0)).xyz; 
     vWorldPos = worldPos;
 
     vec3 lightDir = normalize(orbPosition - worldPos);
@@ -21,5 +21,10 @@ void main() {
     // Multiply each vertex by the model matrix to get the world position of each vertex, 
     // then the view matrix to get the position in the camera coordinate system, 
     // and finally the projection matrix to get final vertex position
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+    if (distance(worldPos, orbPosition) < orbRadius) {
+      gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position + orbRadius, 1.0);
+    } else {
+      gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+    }
+    
 }
