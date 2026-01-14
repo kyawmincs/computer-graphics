@@ -104,15 +104,16 @@ scene.add(sphereLight);
 
 // Listen to keyboard events.
 const keyboard = new THREEx.KeyboardState();
+const MOVE_UNIT = 0.2;
 function checkKeyboard() {
-  if (keyboard.pressed('W')) orbPosition.value.z -= 0.3;
-  else if (keyboard.pressed('S')) orbPosition.value.z += 0.3;
+  if (keyboard.pressed('W')) orbPosition.value.z -= MOVE_UNIT;
+  else if (keyboard.pressed('S')) orbPosition.value.z += MOVE_UNIT;
 
-  if (keyboard.pressed('A')) orbPosition.value.x -= 0.3;
-  else if (keyboard.pressed('D')) orbPosition.value.x += 0.3;
+  if (keyboard.pressed('A')) orbPosition.value.x -= MOVE_UNIT;
+  else if (keyboard.pressed('D')) orbPosition.value.x += MOVE_UNIT;
 
-  if (keyboard.pressed('E')) orbPosition.value.y -= 0.3;
-  else if (keyboard.pressed('Q')) orbPosition.value.y += 0.3;
+  if (keyboard.pressed('E')) orbPosition.value.y -= MOVE_UNIT;
+  else if (keyboard.pressed('Q')) orbPosition.value.y += MOVE_UNITww;
 
   // The following tells three.js that some uniforms might have changed
   armadilloMaterial.needsUpdate = true;
