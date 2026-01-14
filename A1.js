@@ -11,7 +11,7 @@ const {renderer, scene, camera, worldFrame} = setup();
 const orbPosition = {type: 'v3', value: new THREE.Vector3(0.0, 1.0, 0.0)};
 // TODO: Create uniform variable for the radius of the orb and pass it into the shaders,
 // you will need them in the latter part of the assignment
-const orbRadius = {value: 1};
+const orbRadius = {value: 1.5};
 
 // Materials: specifying uniforms and shaders
 // Diffuse texture map (this defines the main colors of the boxing glove)
@@ -113,7 +113,7 @@ function checkKeyboard() {
   else if (keyboard.pressed('D')) orbPosition.value.x += MOVE_UNIT;
 
   if (keyboard.pressed('E')) orbPosition.value.y -= MOVE_UNIT;
-  else if (keyboard.pressed('Q')) orbPosition.value.y += MOVE_UNITww;
+  else if (keyboard.pressed('Q')) orbPosition.value.y += MOVE_UNIT;
 
   // The following tells three.js that some uniforms might have changed
   armadilloMaterial.needsUpdate = true;

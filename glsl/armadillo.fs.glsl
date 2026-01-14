@@ -8,7 +8,7 @@ uniform float orbRadius;
 
 void main() {
   // orbRadius + 1 is arbitrary for best cyan lighting 
-  if (distance(vWorldPos, orbPosition) < orbRadius + 1.0) {
+  if (distance(vWorldPos, orbPosition) < orbRadius) {
     gl_FragColor = vec4(intensity * vec3(0.0, 1.0, 1.0), 1.0); 
   } else {
     gl_FragColor = vec4(intensity * vec3(1.0, 1.0, 1.0), 1.0); 
