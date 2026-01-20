@@ -9,6 +9,7 @@ const {renderer, scene, camera, worldFrame} = setup();
 
 // Initialize uniform
 const orbPosition = {type: 'v3', value: new THREE.Vector3(0.0, 1.0, 0.0)};
+const orbBasePosition = new THREE.Vector3(0.0, 1.0, 0.0); // To have oscillating sphere
 // TODO: Create uniform variable for the radius of the orb and pass it into the shaders,
 // you will need them in the latter part of the assignment
 const orbRadius = {value: 1.5};
@@ -106,14 +107,14 @@ scene.add(sphereLight);
 const keyboard = new THREEx.KeyboardState();
 const MOVE_UNIT = 0.2;
 function checkKeyboard() {
-  if (keyboard.pressed('W')) orbPosition.value.z -= MOVE_UNIT;
-  else if (keyboard.pressed('S')) orbPosition.value.z += MOVE_UNIT;
+  if (keyboard.pressed('W')) orbBasePosition.z -= MOVE_UNIT;
+  else if (keyboard.pressed('S')) orbBasePosition.z += MOVE_UNIT;
 
-  if (keyboard.pressed('A')) orbPosition.value.x -= MOVE_UNIT;
-  else if (keyboard.pressed('D')) orbPosition.value.x += MOVE_UNIT;
+  if (keyboard.pressed('A')) orbBasePosition.x -= MOVE_UNIT;
+  else if (keyboard.pressed('D')) orbBasePosition.x += MOVE_UNIT;
 
-  if (keyboard.pressed('E')) orbPosition.value.y -= MOVE_UNIT;
-  else if (keyboard.pressed('Q')) orbPosition.value.y += MOVE_UNIT;
+  if (keyboard.pressed('E')) orbBasePosition.y -= MOVE_UNIT;
+  else if (keyboard.pressed('Q')) orbBasePosition.y += MOVE_UNIT;
 
   // The following tells three.js that some uniforms might have changed
   armadilloMaterial.needsUpdate = true;
@@ -127,9 +128,21 @@ function checkKeyboard() {
   );
 }
 
+const clock = new THREE.Clock();
+
 // Setup update callback
 function update() {
   checkKeyboard();
+  const elaspedTime = clock.getElapsedTime();
+
+  // Make demo easier with spinning lighting
+  sphere.position.y = Math.cos(elaspedTime);
+  sphere.position.x = Math.sin(elaspedTime);
+
+  // Readjust the sphere based on keyboard inputs + add oscillations
+  orbPosition.value.x = orbBasePosition.x + Math.sin(elaspedTime);
+  orbPosition.value.y = orbBasePosition.y + Math.cos(elaspedTime);
+  orbPosition.value.z = orbBasePosition.z + Math.sin(elaspedTime);
 
   // Requests the next update call, this creates a loop
   requestAnimationFrame(update);
