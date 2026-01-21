@@ -9,6 +9,8 @@ Move Orb towards Armadillo to deform it. The deformation is most obvious near th
 
 Part 2:
 Feature extensions:
-1. Made showcasing the light physics and deformation easier with spinning the sphere so no need for keyboard microadjusting 
+1. Made showcasing the light physics and deformation easier with a ghost-like sphere movement so no need for keyboard microadjusting
     Hover the orb near Armadillo's face for best results!
-2.     
+2. Also added a GUI setting to make the changes to the sphere's lighting. If the control is too small, press Cmd and + or Crtl and +
+3. Added lots of graves semi-randomly using BoxGeometry to make the scene look scary.
+4. Added some ghost-like lights that go around the Armadillo

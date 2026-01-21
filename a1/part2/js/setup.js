@@ -19,7 +19,7 @@ function setup() {
 
   // Construct a THREEjs renderer from the canvas and context.
   const renderer = new THREE.WebGLRenderer({canvas, context});
-  renderer.setClearColor(0x80cee1); // blue background colour
+  renderer.setClearColor(0x0a0a0f); // dark background colour
   const scene = new THREE.Scene();
 
   // Set up the camera.
@@ -75,7 +75,7 @@ function setup() {
     roughnessMap: floorRoughness,
     side: THREE.DoubleSide,
   });
-  const floorGeometry = new THREE.PlaneBufferGeometry(30.0, 30.0);
+  const floorGeometry = new THREE.PlaneBufferGeometry(80.0, 80.0);
   const floor = new THREE.Mesh(floorGeometry, floorMaterial);
   floor.rotation.x = -Math.PI / 2.0;
   floor.position.y = -0.3;
@@ -83,7 +83,7 @@ function setup() {
   floor.parent = worldFrame;
 
   // Cast a weak ambient light to make the floor visible.
-  const light = new THREE.AmbientLight(0xffffff, 0.5);
+  const light = new THREE.AmbientLight('#86cdff', 0.275);
   scene.add(light);
 
   return {
