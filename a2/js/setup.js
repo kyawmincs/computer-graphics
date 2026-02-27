@@ -101,7 +101,9 @@ function setup() {
 }
 
 async function loadGLTFAsync(files, postLoading) {
-  //TODO: implement this function to load the GLB model
+  const loader = new GLTFLoader();
+  let models = await Promise.all(files.map(file => loader.loadAsync(file)));
+  postLoading(models);
 }
 
 async function loadOBJAsync(files, postLoading) {

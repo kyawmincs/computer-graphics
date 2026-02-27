@@ -3,19 +3,14 @@
  * Assignment 2 Template
  */
 
-import { setup, loadGLTFAsync, loadOBJAsync } from './js/setup.js';
+import {setup, loadGLTFAsync, loadOBJAsync} from './js/setup.js';
 import * as THREE from './js/three.module.js';
-import { SourceLoader } from './js/SourceLoader.js';
-import { THREEx } from './js/KeyboardState.js';
+import {SourceLoader} from './js/SourceLoader.js';
+import {THREEx} from './js/KeyboardState.js';
 
 // Setup and return the scene and related objects.
 // You should look into js/setup.js to see what exactly is done here.
-const {
-  renderer,
-  scene,
-  camera,
-  worldFrame,
-} = setup();
+const {renderer, scene, camera, worldFrame} = setup();
 
 // Used THREE.Clock for animation
 var clock = new THREE.Clock();
@@ -28,7 +23,7 @@ var clock = new THREE.Clock();
 
 // As in A1 we position the sphere in the world solely using this uniform
 // So the initial y-offset being 1.0 here is intended.
-const sphereOffset = { type: 'v3', value: new THREE.Vector3(0.0, 1.0, 0.0) };
+const sphereOffset = {type: 'v3', value: new THREE.Vector3(0.0, 1.0, 0.0)};
 
 // The following constants are provided as reference values. Feel free to adjust them.
 // Distance threshold beyond which the armadillo should shoot lasers at the sphere (needed for Part e).
@@ -50,7 +45,9 @@ const sphereGrowSpeed = 3.5;
 const colorSpeed = 0.8;
 
 // Diffuse texture map (this defines the main colors of the boxing glove)
-const gloveColorMap = new THREE.TextureLoader().load('images/boxing_gloves_texture.png');
+const gloveColorMap = new THREE.TextureLoader().load(
+  'images/boxing_gloves_texture.png',
+);
 
 const boxingGloveMaterial = new THREE.MeshStandardMaterial({
   map: gloveColorMap,
@@ -62,10 +59,7 @@ const eyeMaterial = new THREE.ShaderMaterial();
 // You can use MeshStandardMaterial like the sphere, or a ShaderMaterial like the eyes.
 
 // Load shaders.
-const shaderFiles = [
-  'glsl/eye.vs.glsl',
-  'glsl/eye.fs.glsl',
-];
+const shaderFiles = ['glsl/eye.vs.glsl', 'glsl/eye.fs.glsl'];
 
 new SourceLoader().load(shaderFiles, function (shaders) {
   eyeMaterial.vertexShader = shaders['glsl/eye.vs.glsl'];
@@ -86,18 +80,65 @@ new SourceLoader().load(shaderFiles, function (shaders) {
 //       Relevant bone names: "Forearm_L", "Forearm_R", "Wrist_L", "Wrist_R"
 // --------------------------------------------------------------------------------------------
 
-
 // https://threejs.org/docs/#api/en/geometries/SphereGeometry
 const sphereGeometry = new THREE.SphereGeometry(1.0, 32.0, 32.0);
 const sphereMaterial = new THREE.MeshStandardMaterial({
-  emissive: new THREE.Color(0xffff00),    // add self-emission (yellow)
-  emissiveIntensity: 1.0
+  emissive: new THREE.Color(0xffff00), // add self-emission (yellow)
+  emissiveIntensity: 1.0,
 });
 const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
 scene.add(sphere);
 
 const sphereLight = new THREE.PointLight(0xffffff, 50.0, 100);
 scene.add(sphereLight);
+
+let wristL, wristR, forearmL, forearmR;
+
+loadGLTFAsync(['glb/armadillo.glb'], models => {
+  const armadillo = models[0].scene;
+  console.log(armadillo); // See the model information
+  armadillo.scale.set(0.07, 0.07, 0.07);
+  armadillo.position.set(0.4, 3.6, -6);
+  armadillo.rotation.y = Math.PI;
+
+  // Find bones
+  armadillo.traverse(function (child) {
+    if (child.isBone) {
+      if (child.name === 'Wrist_L') wristL = child;
+      if (child.name === 'Wrist_R') wristR = child;
+      if (child.name === 'Forearm_L') forearmL = child;
+      if (child.name === 'Forearm_R') forearmR = child;
+    }
+  });
+
+  scene.add(armadillo);
+
+  // Load boxing gloves
+  loadOBJAsync(
+    ['obj/boxing_glove.obj', 'obj/boxing_glove.obj'],
+    function (gloveModels) {
+      const leftGlove = gloveModels[0];
+      const rightGlove = gloveModels[1];
+
+      // Apply the texture material to all meshes in each glove
+      leftGlove.traverse(child => {
+        if (child.isMesh) child.material = boxingGloveMaterial;
+      });
+      rightGlove.traverse(child => {
+        if (child.isMesh) child.material = boxingGloveMaterial;
+      });
+
+      wristL.add(leftGlove);
+      wristR.add(rightGlove);
+
+      leftGlove.scale.set(1.2, 1.2, 1.2);
+      rightGlove.scale.set(1.2, 1.2, 1.2);
+
+      leftGlove.rotation.set(2.3, 3, 0.5);
+      rightGlove.rotation.set(3.5, 0.5, 0);
+    },
+  );
+});
 
 // PART C -------------------------------------------------------------------------------------
 // Create eye balls and place on the armadillo
@@ -108,7 +149,7 @@ const eyeGeometry = new THREE.SphereGeometry(1.0, 32, 32);
 const eyeScale = 0.5;
 
 const leftEyeSocket = new THREE.Object3D();
-const leftEyeSocketPos = new THREE.Vector3(0, 4.0, 0);  // TODO: Adjust position to place on armadillo's face
+const leftEyeSocketPos = new THREE.Vector3(0, 4.0, 0); // TODO: Adjust position to place on armadillo's face
 leftEyeSocket.position.copy(leftEyeSocketPos);
 
 const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
@@ -120,14 +161,12 @@ scene.add(leftEyeSocket);
 // TODO: Create the right eye similarly and add it to the scene.
 // --------------------------------------------------------------------------------------------
 
-
 // PART D -------------------------------------------------------------------------------------
 // Make the eyes look at the sphere
 //
 // TODO: Create a function to update eye orientations so they look at the sphere.
 // HINT: THREE.Object3D has a lookAt() method.
 // --------------------------------------------------------------------------------------------
-
 
 // PART E -------------------------------------------------------------------------------------
 // Create laser beams from eyes to sphere
@@ -136,24 +175,17 @@ scene.add(leftEyeSocket);
 // HINT: THREE.CylinderGeometry can be used for the laser beam shape.
 // --------------------------------------------------------------------------------------------
 
-
 // Listen to keyboard events.
 const keyboard = new THREEx.KeyboardState();
 function checkKeyboard() {
-  if (keyboard.pressed("W"))
-    sphereOffset.value.z -= 0.1;
-  else if (keyboard.pressed("S"))
-    sphereOffset.value.z += 0.1;
+  if (keyboard.pressed('W')) sphereOffset.value.z -= 0.1;
+  else if (keyboard.pressed('S')) sphereOffset.value.z += 0.1;
 
-  if (keyboard.pressed("A"))
-    sphereOffset.value.x -= 0.1;
-  else if (keyboard.pressed("D"))
-    sphereOffset.value.x += 0.1;
+  if (keyboard.pressed('A')) sphereOffset.value.x -= 0.1;
+  else if (keyboard.pressed('D')) sphereOffset.value.x += 0.1;
 
-  if (keyboard.pressed("E"))
-    sphereOffset.value.y -= 0.1;
-  else if (keyboard.pressed("Q"))
-    sphereOffset.value.y += 0.1;
+  if (keyboard.pressed('E')) sphereOffset.value.y -= 0.1;
+  else if (keyboard.pressed('Q')) sphereOffset.value.y += 0.1;
 
   // TODO: Calculate distance from eyes to sphere for laser activation (Part e).
 
@@ -169,17 +201,44 @@ function checkKeyboard() {
   // TODO: Call your eye update function here to make eyes track the sphere (Part d).
 
   // Move the sphere light in the scene. This allows the floor to reflect the light as it moves.
-  sphereLight.position.set(sphereOffset.value.x, sphereOffset.value.y, sphereOffset.value.z);
-  sphere.position.set(sphereOffset.value.x, sphereOffset.value.y, sphereOffset.value.z);
+  sphereLight.position.set(
+    sphereOffset.value.x,
+    sphereOffset.value.y,
+    sphereOffset.value.z,
+  );
+  sphere.position.set(
+    sphereOffset.value.x,
+    sphereOffset.value.y,
+    sphereOffset.value.z,
+  );
 }
 
+function waveHands() {
+  if (!forearmL || !forearmR) return;
 
+  const t = clock.getElapsedTime();
+
+  const armPos = new THREE.Vector3(0.4, 0, -6);
+  const spherePos = new THREE.Vector3(
+    sphereOffset.value.x,
+    0, // ignore Y like the demo
+    sphereOffset.value.z,
+  );
+
+  const dist = armPos.distanceTo(spherePos);
+
+  const closeness = Math.max(0, (waveDistance - dist) / waveDistance);
+  const freq = waveFreqBase + closeness * 15.0;
+
+  const angle = Math.sin(t * freq) * 0.8;
+  forearmL.rotation.y = angle;
+  forearmR.rotation.y = -angle;
+}
 // Setup update callback
 function update() {
   checkKeyboard();
 
-  // TODO: Implement armadillo hand waving animation (Part b).
-  // HINT: Modify the rotation of the forearm bones using a periodic function.
+  waveHands();
 
   // Requests the next update call, this creates a loop
   requestAnimationFrame(update);
