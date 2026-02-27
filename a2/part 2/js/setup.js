@@ -24,7 +24,7 @@ function setup() {
 
   // Construct a THREEjs renderer from the canvas and context.
   const renderer = new THREE.WebGLRenderer({canvas, context, antialias: true});
-  renderer.setClearColor(0x80cee1); // blue background colour
+  renderer.setClearColor(0x000000); // dark background
   const scene = new THREE.Scene();
 
   // Set up the camera.
@@ -89,7 +89,7 @@ function setup() {
   floor.parent = worldFrame;
 
   // Cast a weak ambient light to make the floor visible.
-  const light = new THREE.AmbientLight(0xffffff, 0.5);
+  const light = new THREE.AmbientLight(0xffffff, 0.05);
   scene.add(light);
 
   return {
