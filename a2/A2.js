@@ -96,77 +96,72 @@ let wristL, wristR, forearmL, forearmR;
 
 loadGLTFAsync(['glb/armadillo.glb'], models => {
   const armadillo = models[0].scene;
-  console.log(armadillo); // See the model information
-  armadillo.scale.set(0.07, 0.07, 0.07);
+  armadillo.scale.setScalar(0.07);
   armadillo.position.set(0.4, 3.6, -6);
   armadillo.rotation.y = Math.PI;
 
-  // Find bones
-  armadillo.traverse(function (child) {
-    if (child.isBone) {
-      if (child.name === 'Wrist_L') wristL = child;
-      if (child.name === 'Wrist_R') wristR = child;
-      if (child.name === 'Forearm_L') forearmL = child;
-      if (child.name === 'Forearm_R') forearmR = child;
+  const boneMap = {
+    Wrist_L: null,
+    Wrist_R: null,
+    Forearm_L: null,
+    Forearm_R: null,
+  };
+  armadillo.traverse(child => {
+    if (child.isBone && child.name in boneMap) {
+      boneMap[child.name] = child;
     }
   });
 
+  wristL = boneMap.Wrist_L;
+  wristR = boneMap.Wrist_R;
+  forearmL = boneMap.Forearm_L;
+  forearmR = boneMap.Forearm_R;
+
   scene.add(armadillo);
 
-  // Load boxing gloves
-  loadOBJAsync(
-    ['obj/boxing_glove.obj', 'obj/boxing_glove.obj'],
-    function (gloveModels) {
-      const leftGlove = gloveModels[0];
-      const rightGlove = gloveModels[1];
+  // Load and attach boxing gloves
+  loadOBJAsync(['obj/boxing_glove.obj'], function (gloveModels) {
+    const leftGlove = gloveModels[0];
+    const rightGlove = leftGlove.clone();
 
-      // Apply the texture material to all meshes in each glove
-      leftGlove.traverse(child => {
+    function setupGlove(glove, bone, rotation) {
+      glove.traverse(child => {
         if (child.isMesh) child.material = boxingGloveMaterial;
       });
-      rightGlove.traverse(child => {
-        if (child.isMesh) child.material = boxingGloveMaterial;
-      });
+      glove.scale.setScalar(1.2);
+      glove.rotation.set(...rotation);
+      bone.add(glove);
+    }
 
-      wristL.add(leftGlove);
-      wristR.add(rightGlove);
-
-      leftGlove.scale.set(1.2, 1.2, 1.2);
-      rightGlove.scale.set(1.2, 1.2, 1.2);
-
-      leftGlove.rotation.set(2.3, 3, 0.5);
-      rightGlove.rotation.set(3.5, 0.5, 0);
-    },
-  );
+    setupGlove(leftGlove, wristL, [2.3, 3, 0.5]);
+    setupGlove(rightGlove, wristR, [3.5, 0.5, 0]);
+  });
 });
 
-// PART C -------------------------------------------------------------------------------------
-// Create eye balls and place on the armadillo
-//
-// Create an eye ball (left eye provided as example)
-// HINT: Create two eye ball meshes from the same geometry.
 const eyeGeometry = new THREE.SphereGeometry(1.0, 32, 32);
-const eyeScale = 0.5;
+const eyeScale = 0.4;
 
-const leftEyeSocket = new THREE.Object3D();
-const leftEyeSocketPos = new THREE.Vector3(0, 4.0, 0); // TODO: Adjust position to place on armadillo's face
-leftEyeSocket.position.copy(leftEyeSocketPos);
+function createEye(position) {
+  const socket = new THREE.Object3D();
+  socket.position.copy(position);
+  const eye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+  eye.scale.setScalar(eyeScale);
+  socket.add(eye);
+  scene.add(socket);
+  return socket;
+}
 
-const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
-leftEye.scale.copy(new THREE.Vector3(eyeScale, eyeScale, eyeScale));
-leftEyeSocket.add(leftEye);
-
-scene.add(leftEyeSocket);
-
-// TODO: Create the right eye similarly and add it to the scene.
-// --------------------------------------------------------------------------------------------
-
-// PART D -------------------------------------------------------------------------------------
-// Make the eyes look at the sphere
-//
-// TODO: Create a function to update eye orientations so they look at the sphere.
-// HINT: THREE.Object3D has a lookAt() method.
-// --------------------------------------------------------------------------------------------
+const leftEyeSocket = createEye(new THREE.Vector3(-0.2, 8.6, -3.8));
+const rightEyeSocket = createEye(new THREE.Vector3(1, 8.6, -3.8));
+function updateEyes() {
+  const spherePos = new THREE.Vector3(
+    sphereOffset.value.x,
+    sphereOffset.value.y,
+    sphereOffset.value.z,
+  );
+  leftEyeSocket.lookAt(spherePos);
+  rightEyeSocket.lookAt(spherePos);
+}
 
 // PART E -------------------------------------------------------------------------------------
 // Create laser beams from eyes to sphere
@@ -198,7 +193,7 @@ function checkKeyboard() {
   sphereMaterial.needsUpdate = true;
   eyeMaterial.needsUpdate = true;
 
-  // TODO: Call your eye update function here to make eyes track the sphere (Part d).
+  updateEyes();
 
   // Move the sphere light in the scene. This allows the floor to reflect the light as it moves.
   sphereLight.position.set(
@@ -217,7 +212,6 @@ function waveHands() {
   if (!forearmL || !forearmR) return;
 
   const t = clock.getElapsedTime();
-
   const armPos = new THREE.Vector3(0.4, 0, -6);
   const spherePos = new THREE.Vector3(
     sphereOffset.value.x,
@@ -234,6 +228,7 @@ function waveHands() {
   forearmL.rotation.y = angle;
   forearmR.rotation.y = -angle;
 }
+
 // Setup update callback
 function update() {
   checkKeyboard();
