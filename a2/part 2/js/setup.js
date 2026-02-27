@@ -88,8 +88,8 @@ function setup() {
   scene.add(floor);
   floor.parent = worldFrame;
 
-  // Cast a weak ambient light to make the floor visible.
-  const light = new THREE.AmbientLight(0xffffff, 0.05);
+  // Cast an ambient light to softly lift the whole scene.
+  const light = new THREE.AmbientLight(0xffffff, 0.15);
   scene.add(light);
 
   return {
